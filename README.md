@@ -2,5 +2,4 @@ I've had an idea for a while to create a sculpture with a number of cubes cut al
 
 <p align = 'center'>
   <img src = 'imgs/sketch.jpg' width = '450'>
-  <h5 align = 'center'>Sketch of a potential sculpture</h5>
 </p>
