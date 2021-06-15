@@ -1,4 +1,4 @@
-** Mirror Sculpture
+# mirror-sculpture
 
 <p align = 'center'>
   <img src = 'imgs/sketch.jpg' width = '450'>
