@@ -1,3 +1,5 @@
+** Mirror Sculpture
+
 <p align = 'center'>
   <img src = 'imgs/sketch.jpg' width = '450'>
 </p>
