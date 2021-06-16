@@ -14,7 +14,7 @@ class Image:
                 if i == 0 or i == self.size:
                     line_thickness = 3
                 else:
-                    line_thickness = 2
+                    line_thickness = 1
                 if self.location == 1:
                     pygame.draw.line(win, (0,0,0), (0.35*win_size, (0.025+0.3*i/self.size)*win_size), (0.65*win_size, (0.025+0.3*i/self.size)*win_size), line_thickness)
                     pygame.draw.line(win, (0,0,0), ((0.35+0.3*i/self.size)*win_size, 0.025*win_size), ((0.35+0.3*i/self.size)*win_size, 0.325*win_size), line_thickness)
@@ -46,7 +46,7 @@ class Sculpture:
             if i == 0 or i == self.size:
                 line_thickness = 3
             else:
-                line_thickness = 2
+                line_thickness = 1
             pygame.draw.line(win, (0,0,0), (0.35*win_size, (0.35+0.3*i/self.size)*win_size), (0.65*win_size, (0.35+0.3*i/self.size)*win_size), line_thickness)
             pygame.draw.line(win, (0,0,0), ((0.35+0.3*i/self.size)*win_size, 0.35*win_size), ((0.35+0.3*i/self.size)*win_size, 0.65*win_size), line_thickness)
 
@@ -78,12 +78,13 @@ class Sculpture:
                 textRect.center = ((0.35+0.3*i/self.size)*win_size + 0.5/(2*self.size)*win_size, (0.35+0.3*j/self.size)*win_size + 0.5/(2*self.size)*win_size)
                 win.blit(text, textRect)
 
-size = 4
+
+size = 2
 array = []
 for i in range(size):
     row = []
     for j in range(size):
-        row.append((random.randint(1,4), random.randint(1,3)))
+        row.append((random.randint(1,4), random.randint(1,size)))
     array.append(row)
 
 S = Sculpture(array)
