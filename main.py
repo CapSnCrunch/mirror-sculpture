@@ -72,19 +72,19 @@ class Sculpture:
             for col in range(self.size):
                 # Arrows
                 center = ((0.35+0.3*col/self.size)*win_size + 0.3/(2*self.size)*win_size, (0.35+0.3*row/self.size)*win_size + 0.3/(2*self.size)*win_size)
-                if self.directions[row][col] == 1:
+                if self.directions[row,col] == 1:
                     pygame.draw.line(win, (0,0,0), (center[0], center[1]-0.07*win_size/self.size), (center[0], center[1]+0.07*win_size/self.size), 2)
                     pygame.draw.line(win, (0,0,0), (center[0], center[1]-0.07*win_size/self.size), (center[0]+0.035*win_size/self.size, center[1]-0.035*win_size/self.size), 2)
                     pygame.draw.line(win, (0,0,0), (center[0], center[1]-0.07*win_size/self.size), (center[0]-0.035*win_size/self.size, center[1]-0.035*win_size/self.size), 2)
-                if self.directions[row][col] == 2:
+                if self.directions[row,col] == 2:
                     pygame.draw.line(win, (0,0,0), (center[0]-0.07*win_size/self.size, center[1]), (center[0]+0.07*win_size/self.size, center[1]), 2)
                     pygame.draw.line(win, (0,0,0), (center[0]+0.07*win_size/self.size, center[1]), (center[0]+0.035*win_size/self.size, center[1]-0.035*win_size/self.size), 2)
                     pygame.draw.line(win, (0,0,0), (center[0]+0.07*win_size/self.size, center[1]), (center[0]+0.035*win_size/self.size, center[1]+0.035*win_size/self.size), 2)
-                if self.directions[row][col] == 3:
+                if self.directions[row,col] == 3:
                     pygame.draw.line(win, (0,0,0), (center[0], center[1]-0.07*win_size/self.size), (center[0], center[1]+0.07*win_size/self.size), 2)
                     pygame.draw.line(win, (0,0,0), (center[0], center[1]+0.07*win_size/self.size), (center[0]-0.035*win_size/self.size, center[1]+0.035*win_size/self.size), 2)
                     pygame.draw.line(win, (0,0,0), (center[0], center[1]+0.07*win_size/self.size), (center[0]+0.035*win_size/self.size, center[1]+0.035*win_size/self.size), 2)
-                if self.directions[row][col] == 4:
+                if self.directions[row,col] == 4:
                     pygame.draw.line(win, (0,0,0), (center[0]-0.07*win_size/self.size, center[1]), (center[0]+0.07*win_size/self.size, center[1]), 2)
                     pygame.draw.line(win, (0,0,0), (center[0]-0.07*win_size/self.size, center[1]), (center[0]-0.035*win_size/self.size, center[1]+0.035*win_size/self.size), 2)
                     pygame.draw.line(win, (0,0,0), (center[0]-0.07*win_size/self.size, center[1]), (center[0]-0.035*win_size/self.size, center[1]-0.035*win_size/self.size), 2)
@@ -100,49 +100,56 @@ class Sculpture:
 
     def valid(self):
         '''Checks if the sculpture is valid, that is, none of the mirrors are being blocked'''
+        '''print(self.directions)
+        print(self.heights)'''
         for i in range(self.size):
             for j in range(self.size):
-                print()
+                '''print()
                 print(i, j)
-                print(self.heights)
-                print('current spot', self.directions[i][j], self.heights[i][j])
-                if self.directions[i][j] == 1:
+                print('current spot', self.directions[i][j], self.heights[i][j])'''
+                if self.directions[i,j] == 1:
                     if i == 0:
                         continue
-                    line_of_sight = self.heights[:i][j]
-                if self.directions[i][j] == 2:
+                    line_of_sight = self.heights[:i,j]
+                if self.directions[i,j] == 2:
                     if j == self.size - 1:
                         continue
-                    line_of_sight = self.heights[i][j+1:]
-                if self.directions[i][j] == 3:
+                    line_of_sight = self.heights[i,(j+1):]
+                if self.directions[i,j] == 3:
                     if i == self.size - 1:
                         continue
-                    line_of_sight = self.heights[i+1:][j]
-                if self.directions[i][j] == 4:
+                    line_of_sight = self.heights[(i+1):,j]
+                if self.directions[i,j] == 4:
                     if j == 0:
                         continue
-                    line_of_sight = self.heights[i][:j]
-                
-                print(line_of_sight)
+                    line_of_sight = self.heights[i,:j]
 
-                if line_of_sight.max() >= self.heights[i][j]:
+                if line_of_sight.max() >= self.heights[i,j]:
                     return False
         return True
 
-size = 2
+size = 3
 
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
 
+# True cases to test
 '''directions = np.array([[4, 2],
                        [3, 3]])
 heights = np.array([[2, 2],
                     [2, 1]])'''
+'''directions = np.array([[4, 1],
+                       [2, 2]])
+heights = np.array([[2, 1],
+                    [2, 1]])'''
+'''directions = np.array([[4, 1, 1],
+                       [4, 1, 2],
+                       [3, 1, 2]])
+heights = np.array([[1, 1, 1],
+                    [1, 2, 1],
+                    [1, 3, 1]])'''             
 
 S = Sculpture(directions, heights, (Image(size), Image(size), Image(size), Image(size)))
-
-'''s = Sculpture([[(1, 1), (2, 1)],
-               [(4, 1), (3, 1)]])'''
 
 if __name__ == '__main__':
     win = pygame.display.set_mode((win_size, win_size))
