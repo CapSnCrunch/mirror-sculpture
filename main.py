@@ -33,7 +33,7 @@ class Image:
         # Draw grid offset from center
         for i in range(self.size + 1):
             if i == 0 or i == self.size:
-                line_thickness = 3
+                line_thickness = 2
             else:
                 line_thickness = 1
             if self.location == 1:
@@ -72,7 +72,7 @@ class Sculpture:
         # Draw centered grid
         for i in range(self.size + 1):
             if i == 0 or i == self.size:
-                line_thickness = 3
+                line_thickness = 2
             else:
                 line_thickness = 1
             pygame.draw.line(win, (0,0,0), (0.35*win_size, (0.35+0.3*i/self.size)*win_size), (0.65*win_size, (0.35+0.3*i/self.size)*win_size), line_thickness)
@@ -114,7 +114,7 @@ class Sculpture:
         cursor = pygame.mouse.get_pos()
         if 0.35*win_size < cursor[0] < 0.65*win_size and 0.35*win_size < cursor[1] < 0.65*win_size:
             highlight = [(cursor[0] - 0.35*win_size) // (0.3*win_size/self.size), (cursor[1] - 0.35*win_size) // (0.3*win_size/self.size)]
-            pygame.draw.rect(win, (220,220,220), ((0.35+0.3*highlight[0]/self.size)*win_size, (0.35+0.3*highlight[1]/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size))
+            pygame.draw.rect(win, (0,0,0), ((0.35+0.3*highlight[0]/self.size)*win_size, (0.35+0.3*highlight[1]/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
 
     def valid(self):
         '''Checks if the sculpture is valid, that is, none of the mirrors are being blocked'''
