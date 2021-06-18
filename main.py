@@ -13,12 +13,21 @@ win_size = 800
 #   images. (Perfect sculptures have a height of exactly n).
 
 class Image:
-    def __init__(self, size, location = 1):
+    def __init__(self, img, size, location = 1):
+        self.img = img
         self.size = size
-        self.array = [[0 * size] * size]
         self.location = location # Can be 1-4 for images around the sculpture or 5 for the top
 
     def draw(self):
+        # Draw pieces of the image in the corresponding grid tiles
+        if self.location == 1:
+            win.blit(self.img, (0.35*win_size, 0.025*win_size))
+        if self.location == 2:
+            win.blit(self.img, (0.675*win_size, 0.35*win_size))
+        if self.location == 3:
+            win.blit(self.img, (0.35*win_size, 0.675*win_size))
+        if self.location == 4:
+            win.blit(self.img, (0.025*win_size, 0.35*win_size))
         # Draw grid offset from center
         for i in range(self.size + 1):
             if i == 0 or i == self.size:
@@ -128,7 +137,7 @@ class Sculpture:
                     return False
         return True
 
-size = 3
+size = 2
 
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
@@ -149,7 +158,9 @@ heights = np.array([[1, 1, 1],
                     [1, 2, 1],
                     [1, 3, 1]])'''             
 
-S = Sculpture(directions, heights, (Image(size), Image(size), Image(size), Image(size)))
+img = pygame.surfarray.make_surface(np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size))))
+
+S = Sculpture(directions, heights, (Image(img, size), Image(img, size), Image(img, size), Image(img, size)))
 
 if __name__ == '__main__':
     win = pygame.display.set_mode((win_size, win_size))
