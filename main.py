@@ -15,19 +15,21 @@ win_size = 800
 class Image:
     def __init__(self, img, size, location = 1):
         self.img = img
+        self.array = []
         self.size = size
         self.location = location # Can be 1-4 for images around the sculpture or 5 for the top
 
     def draw(self):
+        rimg = pygame.surfarray.make_surface(np.rot90(self.img, self.location-1))
         # Draw pieces of the image in the corresponding grid tiles
         if self.location == 1:
-            win.blit(self.img, (0.35*win_size, 0.025*win_size))
+            win.blit(rimg, (0.35*win_size, 0.025*win_size))
         if self.location == 2:
-            win.blit(self.img, (0.675*win_size, 0.35*win_size))
+            win.blit(rimg, (0.675*win_size, 0.35*win_size))
         if self.location == 3:
-            win.blit(self.img, (0.35*win_size, 0.675*win_size))
+            win.blit(rimg, (0.35*win_size, 0.675*win_size))
         if self.location == 4:
-            win.blit(self.img, (0.025*win_size, 0.35*win_size))
+            win.blit(rimg, (0.025*win_size, 0.35*win_size))
         # Draw grid offset from center
         for i in range(self.size + 1):
             if i == 0 or i == self.size:
@@ -107,6 +109,13 @@ class Sculpture:
         for img in self.images:
             img.draw()
 
+    def hover(self):
+        '''Check if mouse is hovering over a sculpture tile and highlight the corresponding image tile'''
+        cursor = pygame.mouse.get_pos()
+        if 0.35*win_size < cursor[0] < 0.65*win_size and 0.35*win_size < cursor[1] < 0.65*win_size:
+            highlight = [(cursor[0] - 0.35*win_size) // (0.3*win_size/self.size), (cursor[1] - 0.35*win_size) // (0.3*win_size/self.size)]
+            pygame.draw.rect(win, (220,220,220), ((0.35+0.3*highlight[0]/self.size)*win_size, (0.35+0.3*highlight[1]/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size))
+
     def valid(self):
         '''Checks if the sculpture is valid, that is, none of the mirrors are being blocked'''
         '''print(self.directions)
@@ -137,7 +146,7 @@ class Sculpture:
                     return False
         return True
 
-size = 2
+size = 5
 
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
@@ -158,22 +167,28 @@ heights = np.array([[1, 1, 1],
                     [1, 2, 1],
                     [1, 3, 1]])'''             
 
-img = pygame.surfarray.make_surface(np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size))))
+# img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
+x = np.arange(0, int(0.3*win_size))
+y = np.arange(0, int(0.3*win_size))
+X, Y = np.meshgrid(x, y)
+img = X + Y
+img = 255*img/img.max()
 
 S = Sculpture(directions, heights, (Image(img, size), Image(img, size), Image(img, size), Image(img, size)))
 
 if __name__ == '__main__':
     win = pygame.display.set_mode((win_size, win_size))
     pygame.display.set_caption('Mirror Sculpture')
-    win.fill((255,255,255))
 
-    S.draw()
     print(S.valid())
-
-    pygame.display.update()
 
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+
+        win.fill((255,255,255))
+        S.hover()
+        S.draw()
+        pygame.display.update()
