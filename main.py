@@ -124,7 +124,8 @@ class Sculpture:
             row, col = int((cursor[1] - 0.35*win_size) // (0.3*win_size/self.size)), int((cursor[0] - 0.35*win_size) // (0.3*win_size/self.size))
             pygame.draw.rect(win, (0,0,0), ((0.35+0.3*col/self.size)*win_size, (0.35+0.3*row/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
             
-            print(row, col, self.directions[row,col], self.heights[row,col])
+            # print(row, col, self.directions[row,col], self.heights[row,col])
+
             # Draw highlight on the image
             if self.directions[row,col] == 1:
                 img_row = col
@@ -205,13 +206,14 @@ class Sculpture:
                 dist1 = b1 - a1
                 dist2 = d1 - c1
 
-                # Not sure why row and col need to be swapped here
-                self.reflection[a1:b1,c1:d1] = np.rot90(self.images[self.directions[row,col]-1].img, self.images[self.directions[row,col]-1].location - 1)[a2:a2+dist1,c2:c2+dist2]
-                
-                print('Row:',row,'Col:',col,'Image:',self.directions[row,col] - 1,'img_row:',img_row,'img_col',img_col)
-                print('a1 b1',a1,b1,'c1 d1',c1,d1)
-                print('a2 b2',a2,a2+dist1,'c2 d2',c2,c2+dist2)
+                img_num = self.directions[row,col] - 1
 
+                # Not sure why row and col need to be swapped here
+                if self.directions[row,col] % 2 == 0:
+                    self.reflection[a1:b1,c1:d1] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a2:a2+dist1,c2:c2+dist2], 0)
+                elif self.directions[row,col] % 2 == 1:
+                    self.reflection[a1:b1,c1:d1] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a2:a2+dist1,c2:c2+dist2], 1)
+                
                 # Unrotated image
                 #win.blit(pygame.surfarray.make_surface(self.images[self.directions[row,col] - 1].img), (540, 20))
 
@@ -228,21 +230,18 @@ size = 3
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
 
-# True cases to test
-'''directions = np.array([[4, 2],
-                       [3, 3]])
-heights = np.array([[2, 2],
-                    [2, 1]])'''
-'''directions = np.array([[4, 1],
-                       [2, 2]])
-heights = np.array([[2, 1],
-                    [2, 1]])'''
-directions = np.array([[4, 1, 1],
+'''directions = np.array([[4, 1, 1],
                        [4, 1, 2],
                        [3, 1, 2]])
 heights = np.array([[1, 1, 1],
                     [1, 2, 1],
-                    [1, 3, 1]])            
+                    [1, 3, 1]])'''        
+directions = np.array([[1, 1, 1],
+                       [4, 2, 2],
+                       [4, 2, 3]])
+heights = np.array([[1, 2, 1],
+                    [1, 3, 1],
+                    [3, 3, 2]])
 
 # img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
 
