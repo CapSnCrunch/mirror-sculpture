@@ -1,5 +1,6 @@
 import pygame
 import numpy as np
+from pygame.locals import *
 
 win_size = 800
 
@@ -22,14 +23,19 @@ class Image:
         rimg = pygame.surfarray.make_surface(np.rot90(self.img, self.location-1))
         # Draw pieces of the image in the corresponding grid tiles
         if self.location == 1:
+            pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.005*win_size, 0.34*win_size, 0.34*win_size))
             win.blit(rimg, (0.35*win_size, 0.025*win_size))
         elif self.location == 2:
+            pygame.draw.rect(win, (255,255,255), (0.655*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
             win.blit(rimg, (0.675*win_size, 0.35*win_size))
         elif self.location == 3:
+            pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.655*win_size, 0.34*win_size, 0.34*win_size))
             win.blit(rimg, (0.35*win_size, 0.675*win_size))
         elif self.location == 4:
+            pygame.draw.rect(win, (255,255,255), (0.005*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
             win.blit(rimg, (0.025*win_size, 0.35*win_size))
         elif self.location == 5:
+            pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
             win.blit(rimg, (0.35*win_size, 0.35*win_size))
 
         # Draw grid offset from center
@@ -68,12 +74,14 @@ class Sculpture:
         for i in range(4):
             self.images[i].location = i + 1
 
+        # Initialize font
         pygame.font.init()
         self.font = pygame.font.SysFont('dejavuserif', int(20 - self.size))
 
     def draw(self):
         '''Draws the sculpture, its 4 associated images, and the mirror reflection of those images'''
         # Draw centered grid
+        pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
         for i in range(self.size + 1 - self.show_reflection):
             if i == 0 or i == self.size:
                 line_thickness = 2
@@ -120,31 +128,31 @@ class Sculpture:
 
     def hover(self):
         '''Check if mouse is hovering over a sculpture tile and highlight the corresponding image tile'''
+        color = (255,0,0)
         cursor = pygame.mouse.get_pos()
+
         if 0.35*win_size < cursor[0] < 0.65*win_size and 0.35*win_size < cursor[1] < 0.65*win_size:
             # Draw highlight on the sculpture
             row, col = int((cursor[1] - 0.35*win_size) // (0.3*win_size/self.size)), int((cursor[0] - 0.35*win_size) // (0.3*win_size/self.size))
-            pygame.draw.rect(win, (0,0,0), ((0.35+0.3*col/self.size)*win_size, (0.35+0.3*row/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
-            
-            # print(row, col, self.directions[row,col], self.heights[row,col])
+            pygame.draw.rect(win, color, ((0.35+0.3*col/self.size)*win_size, (0.35+0.3*row/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
 
             # Draw highlight on the image
             if self.directions[row,col] == 1:
                 img_row = col
                 img_col = self.size - self.heights[row,col]
-                pygame.draw.rect(win, (0,0,0), ((0.35+0.3*img_row/self.size)*win_size, (0.025+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
+                pygame.draw.rect(win, color, ((0.35+0.3*img_row/self.size)*win_size, (0.025+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
             elif self.directions[row,col] == 2:
                 img_row = self.heights[row,col] - 1
                 img_col = row
-                pygame.draw.rect(win, (0,0,0), ((0.675+0.3*img_row/self.size)*win_size, (0.35+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
+                pygame.draw.rect(win, color, ((0.675+0.3*img_row/self.size)*win_size, (0.35+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
             elif self.directions[row,col] == 3:
                 img_row = col
                 img_col = self.heights[row,col] - 1
-                pygame.draw.rect(win, (0,0,0), ((0.35+0.3*img_row/self.size)*win_size, (0.675+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
+                pygame.draw.rect(win, color, ((0.35+0.3*img_row/self.size)*win_size, (0.675+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
             elif self.directions[row,col] == 4:
                 img_row = self.size - self.heights[row,col]
                 img_col = row
-                pygame.draw.rect(win, (0,0,0), ((0.025+0.3*img_row/self.size)*win_size, (0.35+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
+                pygame.draw.rect(win, color, ((0.025+0.3*img_row/self.size)*win_size, (0.35+0.3*img_col/self.size)*win_size, 0.3*win_size/self.size, 0.3*win_size/self.size), 3)
 
     def valid(self):
         '''Checks if the sculpture is valid, that is, none of the mirrors are being blocked'''
@@ -181,8 +189,8 @@ class Sculpture:
         for row in range(self.size):
             for col in range(self.size):
                 if self.directions[row,col] == 1:
-                    img_row = col
-                    img_col = self.size - self.heights[row,col]
+                    img_row = self.size - self.heights[row,col]
+                    img_col = col
                 elif self.directions[row,col] == 2:
                     img_row = row
                     img_col = self.heights[row,col] - 1
@@ -203,11 +211,13 @@ class Sculpture:
                     dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
                     self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 1)
 
-size = 3
+size = 2
 
+# Random Sculpture
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
-      
+    
+# Premade Sculptures
 '''directions = np.array([[1, 1, 1],
                        [4, 2, 2],
                        [4, 2, 3]])
@@ -221,27 +231,34 @@ heights = np.array([[1, 1, 1],
                     [2, 2, 2],
                     [3, 3, 3]])'''
 
-# img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
+# Random Image
+img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
 
+# Premade Images
 '''x = np.arange(0, int(0.3*win_size))
 y = np.arange(0, int(0.3*win_size))
 X, Y = np.meshgrid(x, y)
 img = np.sin((X/30)**2 + (Y/30)**5)
 img = 5*img/img.max()'''
-
-x = np.arange(0, int(0.3*win_size))
+'''x = np.arange(0, int(0.3*win_size))
 y = np.arange(0, int(0.3*win_size))
 X, Y = np.meshgrid(x, y)
 img = X + Y
 img = 255*img/img.max()
+img = img'''
 
 S = Sculpture(directions, heights, [Image(size, img), Image(size, img), Image(size, img), Image(size, img)])
 
 if __name__ == '__main__':
     win = pygame.display.set_mode((win_size, win_size))
     pygame.display.set_caption('Mirror Sculpture')
+    win.fill((255,255,255))
 
     print(S.valid())
+
+    mouse_position = (0, 0)
+    drawing = False
+    last_pos = None
 
     while True:
         for event in pygame.event.get():
@@ -249,11 +266,37 @@ if __name__ == '__main__':
                 run = False
                 pygame.quit()
             elif event.type == pygame.KEYDOWN:
+                if event.key == 114:
+                    win.fill((255,255,255))
                 if event.key == pygame.K_SPACE:
                     S.show_reflection = not S.show_reflection
+            elif event.type == MOUSEMOTION:
+                if drawing:
+                    mouse_position = pygame.mouse.get_pos()
+                    # if mouse_position[0] < 256 and mouse_position[1] < 256:
+                    if True:
+                        if last_pos is not None:
+                            pygame.draw.line(win, (0,0,0), last_pos, mouse_position, 5)
+                        last_pos = mouse_position
+            elif event.type == MOUSEBUTTONUP:
+                mouse_position = (0, 0)
+                last_pos = None
+                drawing = False
+            elif event.type == MOUSEBUTTONDOWN:
+                drawing = True
 
-        win.fill((255,255,255))
+        #win.fill((255,255,255))
         S.draw()
         S.hover()
+
+        img1 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.025*win_size):int(0.325*win_size)]
+        img2 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.025*win_size):int(0.325*win_size)]
+        img3 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.675*win_size):int(0.975*win_size)]
+        img4 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.675*win_size):int(0.975*win_size)]
         
+        S.images[0].img = img1
+        S.images[1].img = img2
+        S.images[2].img = img3
+        S.images[3].img = img4
+
         pygame.display.update()
