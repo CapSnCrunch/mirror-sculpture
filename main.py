@@ -193,25 +193,15 @@ class Sculpture:
                     img_row = self.size - self.heights[row,col]
                     img_col = row
 
-                c1 = int(row*0.3*win_size/self.size)
-                d1 = int((row+1)*0.3*win_size/self.size)
-                a1 = int(col*0.3*win_size/self.size)
-                b1 = int((col+1)*0.3*win_size/self.size)
-
-                a2 = int(img_row*0.3*win_size/self.size)
-                c2 = int(img_col*0.3*win_size/self.size)
-                dist1 = b1 - a1
-                dist2 = d1 - c1
-
+                a = np.linspace(0, 0.3*win_size, self.size+1, dtype = int)
                 img_num = self.directions[row,col] - 1
-
-                # Not sure why, but row and col need to be swapped here
+                
                 if self.directions[row,col] % 2 == 0:
-                    self.reflection[a1:b1,c1:d1] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a2:a2+dist1,c2:c2+dist2], 0)
+                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col+1],a[img_row]:a[img_row+1]], 0)
                 elif self.directions[row,col] % 2 == 1:
-                    self.reflection[a1:b1,c1:d1] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a2:a2+dist1,c2:c2+dist2], 1)
+                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col+1],a[img_row]:a[img_row+1]], 1)
 
-size = 4
+size = 3
 
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
