@@ -184,22 +184,24 @@ class Sculpture:
                     img_row = col
                     img_col = self.size - self.heights[row,col]
                 elif self.directions[row,col] == 2:
-                    img_row = self.heights[row,col] - 1
-                    img_col = row
+                    img_row = row
+                    img_col = self.heights[row,col] - 1
                 elif self.directions[row,col] == 3:
                     img_row = self.heights[row,col] - 1
                     img_col = col
                 elif self.directions[row,col] == 4:
-                    img_row = self.size - self.heights[row,col]
-                    img_col = row
+                    img_row = row
+                    img_col = self.size - self.heights[row,col]
 
-                a = np.linspace(0, 0.3*win_size, self.size+1, dtype = int)
+                a = np.linspace(0, 0.3*win_size - 1, self.size+1, dtype = int)
                 img_num = self.directions[row,col] - 1
                 
                 if self.directions[row,col] % 2 == 0:
-                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col+1],a[img_row]:a[img_row+1]], 0)
+                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
+                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 0)
                 elif self.directions[row,col] % 2 == 1:
-                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col+1],a[img_row]:a[img_row+1]], 1)
+                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
+                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 1)
 
 size = 3
 
