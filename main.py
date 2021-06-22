@@ -68,7 +68,7 @@ class Sculpture:
         self.size = len(directions[0])
         self.images = images
         self.reflection = 255 * np.ones((int(0.3*win_size), int(0.3*win_size)))
-        self.show_reflection = False
+        self.show_reflection = True
 
         # Assign locations of images based on the order we were provided them
         for i in range(4):
@@ -128,7 +128,7 @@ class Sculpture:
 
     def hover(self):
         '''Check if mouse is hovering over a sculpture tile and highlight the corresponding image tile'''
-        color = (255,0,0)
+        color = (0,0,0)
         cursor = pygame.mouse.get_pos()
 
         if 0.35*win_size < cursor[0] < 0.65*win_size and 0.35*win_size < cursor[1] < 0.65*win_size:
@@ -211,7 +211,7 @@ class Sculpture:
                     dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
                     self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 1)
 
-size = 2
+size = 12
 
 # Random Sculpture
 directions = np.random.randint(1, 5, size = (size, size))
@@ -235,27 +235,25 @@ heights = np.array([[1, 1, 1],
 img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
 
 # Premade Images
-'''x = np.arange(0, int(0.3*win_size))
+x = np.arange(0, int(0.3*win_size))
 y = np.arange(0, int(0.3*win_size))
 X, Y = np.meshgrid(x, y)
-img = np.sin((X/30)**2 + (Y/30)**5)
-img = 5*img/img.max()'''
-'''x = np.arange(0, int(0.3*win_size))
-y = np.arange(0, int(0.3*win_size))
-X, Y = np.meshgrid(x, y)
+
+'''img = np.sin(((X-120)/200)**2 + ((Y-120)/200)**2)
+img = 255*img/img.max()'''
+
 img = X + Y
 img = 255*img/img.max()
-img = img'''
 
 S = Sculpture(directions, heights, [Image(size, img), Image(size, img), Image(size, img), Image(size, img)])
+print(S.valid())
 
 if __name__ == '__main__':
     win = pygame.display.set_mode((win_size, win_size))
     pygame.display.set_caption('Mirror Sculpture')
     win.fill((255,255,255))
 
-    print(S.valid())
-
+    image_drawing = False
     mouse_position = (0, 0)
     drawing = False
     last_pos = None
@@ -289,14 +287,16 @@ if __name__ == '__main__':
         S.draw()
         S.hover()
 
-        img1 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.025*win_size):int(0.325*win_size)]
-        img2 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.025*win_size):int(0.325*win_size)]
-        img3 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.675*win_size):int(0.975*win_size)]
-        img4 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.675*win_size):int(0.975*win_size)]
-        
-        S.images[0].img = img1
-        S.images[1].img = img2
-        S.images[2].img = img3
-        S.images[3].img = img4
+        if image_drawing == True:
+
+            img1 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.025*win_size):int(0.325*win_size)]
+            img2 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.025*win_size):int(0.325*win_size)]
+            img3 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.675*win_size):int(0.975*win_size)]
+            img4 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.675*win_size):int(0.975*win_size)]
+            
+            S.images[0].img = img1
+            S.images[1].img = img2
+            S.images[2].img = img3
+            S.images[3].img = img4
 
         pygame.display.update()
