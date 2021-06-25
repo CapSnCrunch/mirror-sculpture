@@ -68,7 +68,10 @@ class Sculpture:
         self.size = len(directions[0])
         self.images = images
         self.reflection = 255 * np.ones((int(0.3*win_size), int(0.3*win_size)))
+
         self.show_reflection = True
+        self.image_drawing = False
+        self.reflection_drawing = False
 
         # Assign locations of images based on the order we were provided them
         for i in range(4):
@@ -81,7 +84,7 @@ class Sculpture:
     def draw(self):
         '''Draws the sculpture, its 4 associated images, and the mirror reflection of those images'''
         # Draw centered grid
-        pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
+        pygame.draw.rect(win, (255,255,255), (0.32*win_size, 0.32*win_size, 0.36*win_size, 0.36*win_size))
         for i in range(self.size + 1 - self.show_reflection):
             if i == 0 or i == self.size:
                 line_thickness = 2
@@ -123,7 +126,10 @@ class Sculpture:
 
         # Draw reflection
         if self.show_reflection:
-            self.reflect()
+            if self.reflection_drawing:
+                self.reverse_reflect()
+            else:
+                 self.reflect()
             Image(self.size, self.reflection, 5).draw()
 
     def hover(self):
@@ -211,12 +217,44 @@ class Sculpture:
                     dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
                     self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 1)
 
-size = 12
+    def reverse_reflect(self):
+        '''Gets the images needed to create the given reflection'''
+        pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
+        for row in range(self.size):
+            for col in range(self.size):
+                if self.directions[row,col] == 1:
+                    img_row = self.size - self.heights[row,col]
+                    img_col = col
+                elif self.directions[row,col] == 2:
+                    img_row = row
+                    img_col = self.heights[row,col] - 1
+                elif self.directions[row,col] == 3:
+                    img_row = self.heights[row,col] - 1
+                    img_col = col
+                elif self.directions[row,col] == 4:
+                    img_row = row
+                    img_col = self.size - self.heights[row,col]
+
+                a = np.linspace(0, 0.3*win_size - 1, self.size+1, dtype = int)
+                img_num = self.directions[row,col] - 1
+                
+                print(row, col)
+                print(img_row, img_col)
+                print()
+
+                if self.directions[row,col] % 2 == 0:
+                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
+                    self.images[img_num].img[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2] = np.rot90(np.flip(self.reflection[a[col]:a[col+1],a[row]:a[row+1]], 0), 1 - self.images[img_num].location)
+                elif self.directions[row,col] % 2 == 1:
+                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
+                    self.images[img_num].img[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2] = np.rot90(np.flip(self.reflection[a[col]:a[col+1],a[row]:a[row+1]], 1), 1 - self.images[img_num].location)
+
+size = 2
 
 # Random Sculpture
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
-    
+
 # Premade Sculptures
 '''directions = np.array([[1, 1, 1],
                        [4, 2, 2],
@@ -248,12 +286,17 @@ img = 255*img/img.max()
 S = Sculpture(directions, heights, [Image(size, img), Image(size, img), Image(size, img), Image(size, img)])
 print(S.valid())
 
+print(S.directions)
+print(S.heights)
+
 if __name__ == '__main__':
     win = pygame.display.set_mode((win_size, win_size))
     pygame.display.set_caption('Mirror Sculpture')
     win.fill((255,255,255))
 
-    image_drawing = False
+    S.image_drawing = False
+    S.reflection_drawing = True
+
     mouse_position = (0, 0)
     drawing = False
     last_pos = None
@@ -283,11 +326,7 @@ if __name__ == '__main__':
             elif event.type == MOUSEBUTTONDOWN:
                 drawing = True
 
-        #win.fill((255,255,255))
-        S.draw()
-        S.hover()
-
-        if image_drawing == True:
+        if S.image_drawing:
 
             img1 = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.025*win_size):int(0.325*win_size)]
             img2 = pygame.surfarray.array2d(win)[int(0.675*win_size):int(0.975*win_size),int(0.025*win_size):int(0.325*win_size)]
@@ -298,5 +337,12 @@ if __name__ == '__main__':
             S.images[1].img = img2
             S.images[2].img = img3
             S.images[3].img = img4
+        
+        elif S.reflection_drawing:
+            S.reflection = pygame.surfarray.array2d(win)[int(0.025*win_size):int(0.325*win_size),int(0.025*win_size):int(0.325*win_size)]
+            S.reverse_reflect()
+
+        S.draw()
+        S.hover()
 
         pygame.display.update()
