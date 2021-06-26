@@ -208,48 +208,44 @@ class Sculpture:
                     img_col = self.size - self.heights[row,col]
 
                 a = np.linspace(0, 0.3*win_size - 1, self.size+1, dtype = int)
+                dist = int(np.floor(a[col+1] - a[col]))
                 img_num = self.directions[row,col] - 1
                 
                 if self.directions[row,col] % 2 == 0:
-                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
-                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 0)
+                    self.reflection[a[col]:a[col]+dist,a[row]:a[row]+dist] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist,a[img_row]:a[img_row]+dist], 0)
                 elif self.directions[row,col] % 2 == 1:
-                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
-                    self.reflection[a[col]:a[col+1],a[row]:a[row+1]] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2], 1)
+                    self.reflection[a[col]:a[col]+dist,a[row]:a[row]+dist] = np.flip(np.rot90(self.images[img_num].img, self.images[img_num].location - 1)[a[img_col]:a[img_col]+dist,a[img_row]:a[img_row]+dist], 1)
 
     def reverse_reflect(self):
         '''Gets the images needed to create the given reflection'''
+
+        # Clear images
+        for image in self.images:
+            image.img = 255 * np.ones((int(0.3*win_size), int(0.3*win_size)))
         pygame.draw.rect(win, (255,255,255), (0.33*win_size, 0.33*win_size, 0.34*win_size, 0.34*win_size))
+        
         for row in range(self.size):
             for col in range(self.size):
                 if self.directions[row,col] == 1:
                     img_row = self.size - self.heights[row,col]
                     img_col = col
                 elif self.directions[row,col] == 2:
-                    img_row = row
-                    img_col = self.heights[row,col] - 1
+                    img_row = self.size - self.heights[row, col]
+                    img_col = row
                 elif self.directions[row,col] == 3:
-                    img_row = self.heights[row,col] - 1
-                    img_col = col
+                    img_row = self.size - self.heights[row,col]
+                    img_col = self.size - col - 1
                 elif self.directions[row,col] == 4:
-                    img_row = row
-                    img_col = self.size - self.heights[row,col]
+                    img_row = self.size - self.heights[row,col]
+                    img_col = self.size - row - 1
 
                 a = np.linspace(0, 0.3*win_size - 1, self.size+1, dtype = int)
+                dist = int(np.floor(a[col+1] - a[col]))
                 img_num = self.directions[row,col] - 1
-                
-                print(row, col)
-                print(img_row, img_col)
-                print()
 
-                if self.directions[row,col] % 2 == 0:
-                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
-                    self.images[img_num].img[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2] = np.rot90(np.flip(self.reflection[a[col]:a[col+1],a[row]:a[row+1]], 0), 1 - self.images[img_num].location)
-                elif self.directions[row,col] % 2 == 1:
-                    dist1, dist2 = a[col+1] - a[col], a[row+1] - a[row]
-                    self.images[img_num].img[a[img_col]:a[img_col]+dist1,a[img_row]:a[img_row]+dist2] = np.rot90(np.flip(self.reflection[a[col]:a[col+1],a[row]:a[row+1]], 1), 1 - self.images[img_num].location)
+                self.images[img_num].img[a[img_col]:a[img_col]+dist,a[img_row]:a[img_row]+dist] = np.rot90(np.flip(self.reflection[a[col]:a[col]+dist,a[row]:a[row]+dist], 1), self.images[img_num].location - 1)
 
-size = 2
+size = 3
 
 # Random Sculpture
 directions = np.random.randint(1, 5, size = (size, size))
@@ -262,12 +258,14 @@ heights = np.random.randint(1, size+1, size = (size, size))
 heights = np.array([[1, 2, 1],
                     [1, 3, 1],
                     [3, 3, 2]])'''
-'''directions = np.array([[1, 1, 1],
-                       [1, 1, 1],
-                       [1, 1, 1]])
-heights = np.array([[1, 1, 1],
+
+'''r = 3
+directions = np.array([[1+r, 1+r, 1+r],
+                       [1+r, 1+r, 1+r],
+                       [1+r, 1+r, 1+r]])
+heights = np.rot90(np.array([[1, 1, 1],
                     [2, 2, 2],
-                    [3, 3, 3]])'''
+                    [3, 3, 3]]), 4 - r)'''
 
 # Random Image
 img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
@@ -286,7 +284,9 @@ img = 255*img/img.max()
 S = Sculpture(directions, heights, [Image(size, img), Image(size, img), Image(size, img), Image(size, img)])
 print(S.valid())
 
+print('Directions')
 print(S.directions)
+print('Heights')
 print(S.heights)
 
 if __name__ == '__main__':
@@ -294,8 +294,8 @@ if __name__ == '__main__':
     pygame.display.set_caption('Mirror Sculpture')
     win.fill((255,255,255))
 
-    S.image_drawing = False
-    S.reflection_drawing = True
+    S.image_drawing = True
+    S.reflection_drawing = False
 
     mouse_position = (0, 0)
     drawing = False
