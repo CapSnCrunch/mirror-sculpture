@@ -249,17 +249,17 @@ class Sculpture:
 
 ### DEFINE SCULTPURE ###
 # Random Sculpture
-size = 20
+size = 3
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
 
 # Premade Perfect Sculptures
-'''directions = np.array([[1, 1, 1],
+directions = np.array([[1, 1, 1],
                        [4, 2, 2],
                        [4, 2, 3]])
 heights = np.array([[1, 2, 1],
                     [1, 3, 1],
-                    [3, 3, 2]])'''
+                    [3, 3, 2]])
 
 # Ramp in direction of r
 '''r = 3
@@ -303,7 +303,7 @@ if __name__ == '__main__':
 
     ### DEFINE HOW TO INTERACT WITH SCULPTURE ###
     # Choose either one option or neither
-    S.image_drawing = True
+    S.image_drawing = False
     S.reflection_drawing = True
 
     mouse_position = (0, 0)
