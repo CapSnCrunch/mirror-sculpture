@@ -245,13 +245,15 @@ class Sculpture:
 
                 self.images[img_num].img[a[img_col]:a[img_col]+dist,a[img_row]:a[img_row]+dist] = np.rot90(np.flip(self.reflection[a[col]:a[col]+dist,a[row]:a[row]+dist], 1), self.images[img_num].location - 1)
 
-size = 3
 
+
+### DEFINE SCULTPURE ###
 # Random Sculpture
+size = 20
 directions = np.random.randint(1, 5, size = (size, size))
 heights = np.random.randint(1, size+1, size = (size, size))
 
-# Premade Sculptures
+# Premade Perfect Sculptures
 '''directions = np.array([[1, 1, 1],
                        [4, 2, 2],
                        [4, 2, 3]])
@@ -259,6 +261,7 @@ heights = np.array([[1, 2, 1],
                     [1, 3, 1],
                     [3, 3, 2]])'''
 
+# Ramp in direction of r
 '''r = 3
 directions = np.array([[1+r, 1+r, 1+r],
                        [1+r, 1+r, 1+r],
@@ -267,6 +270,7 @@ heights = np.rot90(np.array([[1, 1, 1],
                     [2, 2, 2],
                     [3, 3, 3]]), 4 - r)'''
 
+### DEFINE IMAGES ###
 # Random Image
 img = np.random.randint(1,255, size = (int(0.3*win_size), int(0.3*win_size)))
 
@@ -275,15 +279,18 @@ x = np.arange(0, int(0.3*win_size))
 y = np.arange(0, int(0.3*win_size))
 X, Y = np.meshgrid(x, y)
 
+# Circle
 '''img = np.sin(((X-120)/200)**2 + ((Y-120)/200)**2)
 img = 255*img/img.max()'''
 
-img = X + Y
-img = 255*img/img.max()
+# Stripes
+'''img = X + Y
+img = 255*img/img.max()'''
 
+### CREATE SCULPTURE AND PRINT DETAILS ###
 S = Sculpture(directions, heights, [Image(size, img), Image(size, img), Image(size, img), Image(size, img)])
-print(S.valid())
 
+print(S.valid())
 print('Directions')
 print(S.directions)
 print('Heights')
@@ -294,8 +301,10 @@ if __name__ == '__main__':
     pygame.display.set_caption('Mirror Sculpture')
     win.fill((255,255,255))
 
+    ### DEFINE HOW TO INTERACT WITH SCULPTURE ###
+    # Choose either one option or neither
     S.image_drawing = True
-    S.reflection_drawing = False
+    S.reflection_drawing = True
 
     mouse_position = (0, 0)
     drawing = False
